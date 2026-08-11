@@ -8,14 +8,16 @@ import frappe
 @click.option("--host", help="Host address for SSE mode", default="0.0.0.0")
 def mcp_server(site=None, transport="stdio", port=8000, host="0.0.0.0"):
     """Run Universal Dynamic MCP Server for Frappe/ERPNext site."""
-    from ai_mcp.mcp_server import mcp, ensure_frappe
-    site = site or getattr(frappe.local, "site", None) or "ai.local"
+    from ai_mcp.mcp_server import mcp, ensure_frappe, get_active_site
+    site = site or getattr(frappe.local, "site", None) or get_active_site()
     ensure_frappe(site)
-    click.echo(f"Starting AI MCP Server ({transport}) for site: {site}")
+    click.echo(f"Starting AI MCP Server ({transport}) for site: {site}", err=True)
     if transport == "sse":
-        click.echo(f"Running SSE streaming transport on {host}:{port}...")
+        click.echo(f"Running SSE streaming transport on {host}:{port}...", err=True)
         mcp.run(transport="sse", host=host, port=port)
     else:
-        mcp.run(transport="stdio")
+        mcp.run(transport="stdio", show_banner=False)
+
 
 commands = [mcp_server]
+

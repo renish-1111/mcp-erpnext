@@ -13,6 +13,10 @@ import io
 import re
 import time
 
+os.environ["FASTMCP_SHOW_HERO"] = "0"
+os.environ["FASTMCP_LOG_LEVEL"] = "ERROR"
+
+
 # Resolve path dynamically for any Frappe Bench setup
 BENCH_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 SITES_PATH = os.path.join(BENCH_DIR, "sites")
@@ -34,16 +38,43 @@ mcp = FastMCP(
     instructions="Universal Dynamic MCP Server for Frappe & ERPNext v16 packaged in app 'ai_mcp'."
 )
 
+def get_active_site() -> str:
+    """Dynamically determine active site name for any Frappe Bench setup without hardcoded fallbacks."""
+    if getattr(frappe.local, "site", None):
+        return frappe.local.site
+        
+    if os.environ.get("FRAPPE_SITE"):
+        return os.environ["FRAPPE_SITE"]
+
+    if os.path.exists(SITES_PATH):
+        currentsite_txt = os.path.join(SITES_PATH, "currentsite.txt")
+        if os.path.exists(currentsite_txt):
+            try:
+                with open(currentsite_txt, "r") as f:
+                    site = f.read().strip()
+                    if site and os.path.exists(os.path.join(SITES_PATH, site)):
+                        return site
+            except Exception:
+                pass
+
+        for entry in sorted(os.listdir(SITES_PATH)):
+            site_dir = os.path.join(SITES_PATH, entry)
+            if os.path.isdir(site_dir) and os.path.exists(os.path.join(site_dir, "site_config.json")):
+                return entry
+
+    return "localhost"
+
 def ensure_frappe(site: str = None):
     """Ensure Frappe environment is initialized and connected to specified or active site."""
     if not site:
-        site = getattr(frappe.local, "site", None) or os.environ.get("FRAPPE_SITE") or "ai.local"
+        site = get_active_site()
     current_site = getattr(frappe.local, "site", None)
     if not current_site or current_site != site:
         if current_site:
             frappe.destroy()
         frappe.init(site=site, sites_path=SITES_PATH if os.path.exists(SITES_PATH) else "./")
         frappe.connect()
+
 
 def sanitize(obj):
     """Recursively convert Frappe objects (date, datetime, _dict, Decimal, etc.) into pure JSON primitives."""
@@ -1161,6 +1192,7 @@ if __name__ == "__main__":
     if args.transport == "sse":
         mcp.run(transport="sse", host=args.host, port=args.port)
     else:
-        mcp.run(transport="stdio")
+        mcp.run(transport="stdio", show_banner=False)
+
 
 
