@@ -1,0 +1,125 @@
+{
+ "actions": [],
+ "allow_bulk_edit": 1,
+ "allow_rename": 1,
+ "creation": "2026-08-10 03:09:30.368506",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enable_mcp_server",
+  "enable_sql_queries",
+  "max_query_limit",
+  "column_break_1",
+  "auto_prefix_custom_fields",
+  "default_email_account",
+  "audit_log_mcp_actions",
+  "section_guardrails",
+  "enable_rate_limiting",
+  "max_requests_per_minute",
+  "column_break_guardrails",
+  "max_payload_size_kb",
+  "restrict_high_risk_tools"
+ ],
+ "fields": [
+  {
+   "default": "1",
+   "fieldname": "enable_mcp_server",
+   "fieldtype": "Check",
+   "label": "Enable Dynamic MCP Server"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_sql_queries",
+   "fieldtype": "Check",
+   "label": "Allow Read-Only SELECT Queries"
+  },
+  {
+   "default": "200",
+   "fieldname": "max_query_limit",
+   "fieldtype": "Int",
+   "label": "Maximum Query Limit"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "auto_prefix_custom_fields",
+   "fieldtype": "Check",
+   "label": "Auto-Prefix Custom Fields with custom_"
+  },
+  {
+   "fieldname": "default_email_account",
+   "fieldtype": "Link",
+   "label": "Default Email Account",
+   "options": "Email Account"
+  },
+  {
+   "default": "1",
+   "fieldname": "audit_log_mcp_actions",
+   "fieldtype": "Check",
+   "label": "Log All MCP Tool Invocations"
+  },
+  {
+   "fieldname": "section_guardrails",
+   "fieldtype": "Section Break",
+   "label": "Security & Rate-Limiting Guardrails"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_rate_limiting",
+   "fieldtype": "Check",
+   "label": "Enable Rate Limiting"
+  },
+  {
+   "default": "60",
+   "fieldname": "max_requests_per_minute",
+   "fieldtype": "Int",
+   "label": "Max Requests per Minute"
+  },
+  {
+   "fieldname": "column_break_guardrails",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "100",
+   "fieldname": "max_payload_size_kb",
+   "fieldtype": "Int",
+   "label": "Max Response Payload Size (KB)"
+  },
+  {
+   "default": "1",
+   "fieldname": "restrict_high_risk_tools",
+   "fieldtype": "Check",
+   "label": "Restrict High-Risk Tools to System Manager / AI Admin Roles"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-10 03:09:30.368506",
+ "modified_by": "Administrator",
+ "module": "AI MCP",
+ "name": "AI MCP Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
