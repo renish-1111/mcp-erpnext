@@ -1,0 +1,23 @@
+# ===================================================================
+# AI MCP App Package Git Ignore
+# ===================================================================
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+
+# Package Distribution & Egg Info
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# IDE & System Files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*~

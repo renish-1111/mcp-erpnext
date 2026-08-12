@@ -3,7 +3,7 @@ import json
 import frappe
 from ai_mcp import mcp_server
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def execute_tool(tool_name: str, args: dict = None) -> dict:
     """
     Whitelisted HTTP REST API endpoint to execute any MCP tool in ai_mcp.
@@ -26,8 +26,6 @@ def execute_tool(tool_name: str, args: dict = None) -> dict:
             
     args = args or {}
     start_time = time.time()
-    frappe.set_user("Administrator")
-
     
     if not hasattr(mcp_server, tool_name):
         frappe.throw(f"MCP tool '{tool_name}' does not exist in ai_mcp.")
@@ -60,9 +58,8 @@ def execute_tool(tool_name: str, args: dict = None) -> dict:
         mcp_server.log_mcp_action(tool_name, args, status="Error", result={"error": error_msg}, execution_time_ms=latency)
         frappe.throw(f"Error executing MCP tool '{tool_name}': {error_msg}")
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def list_available_tools() -> list:
-
     """
     HTTP REST API endpoint to list all available tools in ai_mcp.
     Endpoint: /api/method/ai_mcp.api.list_available_tools
@@ -89,8 +86,7 @@ def sse_endpoint(port: int = 8000, host: str = None) -> dict:
         if not settings.get("enable_mcp_server"):
             frappe.throw("AI MCP Server is currently disabled in AI MCP Settings.", frappe.PermissionError)
 
-    site = getattr(frappe.local, "site", None) or mcp_server.get_active_site()
-
+    site = getattr(frappe.local, "site", None) or "ai.local"
     if not host:
         request = getattr(frappe.local, "request", None)
         if request and getattr(request, "host", None):

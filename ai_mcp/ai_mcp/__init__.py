@@ -1,1 +1,1 @@
-# Module ai_mcp
+__version__ = "0.0.1"

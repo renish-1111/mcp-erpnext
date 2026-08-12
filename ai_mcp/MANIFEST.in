@@ -1,0 +1,15 @@
+include MANIFEST.in
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include ai_mcp *.css
+recursive-include ai_mcp *.csv
+recursive-include ai_mcp *.html
+recursive-include ai_mcp *.ico
+recursive-include ai_mcp *.js
+recursive-include ai_mcp *.json
+recursive-include ai_mcp *.md
+recursive-include ai_mcp *.png
+recursive-include ai_mcp *.py
+recursive-include ai_mcp *.svg
