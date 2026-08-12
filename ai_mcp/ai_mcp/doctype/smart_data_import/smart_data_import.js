@@ -11,7 +11,7 @@ frappe.ui.form.on("Smart Data Import", {
 		}
 
 		// Prominent 1-Click Primary Action Button
-		if (frm.doc.docstatus === 0 && frm.doc.status !== "Processing") {
+		if (frm.doc.docstatus === 0 && frm.doc.status !== "Processing" && frm.doc.status !== "Completed" && frm.doc.status !== "Partial Success") {
 			frm.add_custom_button(__("🚀 Start Import Now"), () => {
 				frm.events.start_import(frm);
 			}).addClass("btn-primary btn-lg");
@@ -19,6 +19,8 @@ frappe.ui.form.on("Smart Data Import", {
 			frm.add_custom_button(__("🔄 Re-Analyze Files"), () => {
 				frm.events.analyze_dependencies(frm);
 			});
+		} else {
+			frm.clear_custom_buttons();
 		}
 
 		// Realtime Socket Progress Listener
@@ -29,6 +31,10 @@ frappe.ui.form.on("Smart Data Import", {
 				frm.set_value("failed_records", data.failed);
 				frm.set_value("progress_percent", data.progress);
 				frm.refresh_fields();
+
+				if (data.status === "Completed" || data.status === "Partial Success" || data.status === "Processing") {
+					frm.clear_custom_buttons();
+				}
 
 				if (data.message) {
 					frappe.show_progress(__("Import Progress"), data.progress, 100, data.message);

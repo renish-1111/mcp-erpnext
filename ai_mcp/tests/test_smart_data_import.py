@@ -107,6 +107,26 @@ class TestSmartDataImport(unittest.TestCase):
 		# Clean up test records
 		frappe.db.rollback()
 
+	def test_ignore_duplicates(self):
+		"""
+		Tests that ignore_duplicates skips duplicate primary keys without failing.
+		"""
+		engine = SmartImportEngine.__new__(SmartImportEngine)
+		engine.ignore_duplicates = True
+		engine.ignore_link_errors = True
+		engine.stop_on_error = False
+
+		meta = frappe.get_meta("Customer Group")
+		group_name = "All Customer Groups"  # Existing standard Customer Group
+
+		batch = [(2, {"customer_group_name": group_name})]
+		c_success, c_failed, errors = engine._flush_batch_to_db("Customer Group", batch, meta)
+		
+		# Should skip existing record, failed count should be 0
+		self.assertEqual(c_failed, 0)
+		self.assertEqual(len(errors), 0)
+
+
 
 if __name__ == "__main__":
 	unittest.main()

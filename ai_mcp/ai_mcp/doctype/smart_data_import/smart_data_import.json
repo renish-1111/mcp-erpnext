@@ -26,6 +26,7 @@
   "import_type",
   "ignore_link_errors",
   "stop_on_error",
+  "ignore_duplicates",
   "auto_detect_doctype",
   "skip_empty_rows",
   "clean_whitespace",
@@ -147,6 +148,12 @@
    "fieldname": "stop_on_error",
    "fieldtype": "Check",
    "label": "Stop Immediately On First Error"
+  },
+  {
+   "default": "0",
+   "fieldname": "ignore_duplicates",
+   "fieldtype": "Check",
+   "label": "Ignore Duplicates (Primary Key)"
   },
   {
    "default": "1",

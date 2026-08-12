@@ -32,6 +32,7 @@ class SmartImportEngine:
 		self.clean_whitespace = bool(self.doc.clean_whitespace)
 		self.ignore_link_errors = bool(self.doc.ignore_link_errors)
 		self.stop_on_error = bool(self.doc.stop_on_error)
+		self.ignore_duplicates = bool(getattr(self.doc, "ignore_duplicates", False))
 		self.filter_rules = self._parse_filter_rules()
 
 	def _parse_filter_rules(self):
@@ -538,21 +539,45 @@ class SmartImportEngine:
 
 			for row_idx, doc in docs_to_insert:
 				try:
+					if self.ignore_duplicates:
+						doc_name = doc.get("name")
+						if doc_name and frappe.db.exists(target_doctype, doc_name):
+							continue
+						title_field = meta.title_field or (target_doctype.lower().replace(' ', '_') + '_name')
+						if title_field and meta.has_field(title_field) and doc.get(title_field):
+							if frappe.db.exists(target_doctype, {title_field: doc.get(title_field)}):
+								continue
+
 					doc.insert(
 						ignore_permissions=True,
 						ignore_mandatory=self.ignore_link_errors,
 						ignore_links=self.ignore_link_errors
 					)
 					c_success += 1
+				except frappe.DuplicateEntryError as e:
+					if self.ignore_duplicates:
+						pass
+					else:
+						c_failed += 1
+						errors.append({
+							"row": row_idx,
+							"doctype": target_doctype,
+							"reason": str(e)
+						})
+						if self.stop_on_error:
+							raise e
 				except Exception as e:
-					c_failed += 1
-					errors.append({
-						"row": row_idx,
-						"doctype": target_doctype,
-						"reason": str(e)
-					})
-					if self.stop_on_error:
-						raise e
+					if self.ignore_duplicates and ("Duplicate" in type(e).__name__ or "Duplicate entry" in str(e) or "already exists" in str(e)):
+						pass
+					else:
+						c_failed += 1
+						errors.append({
+							"row": row_idx,
+							"doctype": target_doctype,
+							"reason": str(e)
+						})
+						if self.stop_on_error:
+							raise e
 
 			frappe.db.commit()
 
